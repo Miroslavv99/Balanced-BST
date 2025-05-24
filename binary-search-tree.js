@@ -70,67 +70,52 @@ class Tree {
   }
 
   deleteItem(value) {
-    return this.removeRec(this.root, value);
+    this.root = this.removeRec(this.root, value);
   }
 
   removeRec(node, value) {
-    let parent = null;
-    let current = node;
+    if (!node) return null;
 
     //Searching for our node
-    while (current !== null) {
-      if (current.value > value) {
-        parent = current;
-        current = current.left;
-      } else if (current.value < value) {
-        parent = current;
-        current = current.right;
-      } else if (current.value === value) {
-        // If the target node has no children
-        if (current.left === null && current.right === null) {
-          if (parent === null) {
-            this.root = null;
-          } else if (parent.left === current) {
-            parent.left = null;
-          } else if (parent.right === current) {
-            parent.right = null;
-          }
-        }
+    if (node.value > value) {
+      node.left = this.removeRec(node.left, value);
+    } else if (node.value < value) {
+      node.right = this.removeRec(node.right, value);
+    } else {
+      // If the target node has no children
+      if (node.left === null && node.right === null) {
+        return null;
+      }
 
-        // If the target node has only a left child
-        else if (current.left !== null && current.right === null) {
-          if (parent === null) {
-            this.root = current.left;
-          } else if (parent.left === current) {
-            parent.left = current.left;
-          } else if (parent.right === current) {
-            parent.right = current.left;
-          }
-        }
+      // If the target node has only a left child
+      else if (node.left !== null && node.right === null) {
+        return node.left;
+      }
+      // If the target node has only a right child
+      else if (node.left === null && node.right !== null) {
+        return node.right;
+      }
 
-        // If the target node has two children
-        else if (current.left !== null && current.right !== null) {
-          // Find the smallest value in the right subtree
-          let minNode = this.findMin(current.right);
+      // If the target node has two children
+      else {
+        // Find the smallest value in the right subtree
+        let minNode = this.findMin(node.right);
 
-          current.value = minNode.value;
+        node.value = minNode.value;
 
-          current.right = this.removeRec(current.right, minNode.value);
-
-          return;
-        }
+        node.right = this.removeRec(node.right, minNode.value);
       }
     }
+    return node;
   }
 
   findMin(node) {
     // Find the node with the minimum value — the leftmost node in the subtree
-    let current = node;
-
-    while (current.left !== null) {
-      current = current.left;
+    if (node.left === null) {
+      return node;
     }
-    return current;
+
+    return this.findMin(node.left);
   }
 
   find(value) {
