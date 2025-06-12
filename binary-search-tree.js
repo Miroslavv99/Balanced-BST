@@ -49,7 +49,7 @@ class Tree {
     if (this.root === null) {
       this.root = new Node(value);
     } else {
-      return this.addNodeRec(this.root, value);
+      this.addNodeRec(this.root, value);
     }
   }
 
